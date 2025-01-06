@@ -27,7 +27,7 @@ class _SignInPageState extends State<SignInScreen> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text(
-          "Login Demo",
+          "Login",
           style: TextStyle(
             color: Colors.black,
           ),
@@ -36,7 +36,7 @@ class _SignInPageState extends State<SignInScreen> {
       ),
       body: Form(
         key: _formKey,
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
