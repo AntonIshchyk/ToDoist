@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../Models/User.dart';
+import '../db_manager.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -19,6 +21,67 @@ class _SignupScreen extends State<SignupScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  // Method to handle user registration
+  void _registerUser() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      // Create a User object with form data
+      User newUser = User(
+        name: _nameController.text,
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+
+      // Insert user into the database
+      int userId = await DBManager().insertUser(newUser);
+
+      // Check if the user was successfully inserted and show a confirmation dialog
+      if (userId > 0) {
+        // Check if the widget is still mounted before showing a dialog
+        if (mounted) {
+          showDialog(
+            context: context,
+            builder: (BuildContext ctx) {
+              return AlertDialog(
+                title: const Text('Registration Successful'),
+                content: Text('Welcome ${_nameController.text}'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                      Navigator.pop(context);
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      } else {
+        // Show an error message if registration failed
+        if (mounted) {
+          showDialog(
+            context: context,
+            builder: (BuildContext ctx) {
+              return AlertDialog(
+                title: const Text('Registration Failed'),
+                content: const Text('Something went wrong. Please try again.'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      }
+    }
   }
 
   @override
@@ -109,24 +172,7 @@ class _SignupScreen extends State<SignupScreen> {
               ),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState?.validate() ?? false) {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext ctx) {
-                        return AlertDialog(
-                          title: const Text('Successful validation'),
-                          content: Text(
-                              "The following information will be used for registration"
-                              "\nName: ${_nameController.text}"
-                                  "\nEmail: ${_emailController.text}"
-                                  "\nPassword: ${_passwordController.text}"
-                          ),
-                        );
-                      },
-                    );
-                  }
-                },
+                onPressed: _registerUser,  // Call the registration method
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
                   foregroundColor: Colors.white,
@@ -134,9 +180,7 @@ class _SignupScreen extends State<SignupScreen> {
                 child: const Text("Sign up"),
               ),
               OutlinedButton(
-                onPressed: () => {
-                  Navigator.pop(context)
-                },
+                onPressed: () => Navigator.pop(context),
                 child: const Text("Back"),
               ),
             ],
