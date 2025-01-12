@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import '../Access/UserAccess.dart';
 import '../Models/User.dart';
-import '../db_manager.dart';
+
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -33,56 +34,28 @@ class _SignupScreen extends State<SignupScreen> {
         password: _passwordController.text,
       );
 
-      // Insert user into the database
-      int userId = await DBManager().insertUser(newUser);
+      // Call the UserAccess class to insert the new user
+      UserAccess userAccess = UserAccess();
+      await userAccess.insertUser(newUser);
 
-      // Check if the user was successfully inserted and show a confirmation dialog
-      if (userId > 0) {
-        // Check if the widget is still mounted before showing a dialog
-        if (mounted) {
-          showDialog(
-            context: context,
-            builder: (BuildContext ctx) {
-              return AlertDialog(
-                title: const Text('Registration Successful'),
-                content: Text('Welcome ${_nameController.text}'),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(ctx);
-                      Navigator.pop(context);
-                    },
-                    child: const Text('OK'),
-                  ),
-                ],
-              );
-            },
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Success'),
+            content: Text('Welcome ${_nameController.text}'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
+            ],
           );
-        }
-      } else {
-        // Show an error message if registration failed
-        if (mounted) {
-          showDialog(
-            context: context,
-            builder: (BuildContext ctx) {
-              return AlertDialog(
-                title: const Text('Registration Failed'),
-                content: const Text('Something went wrong. Please try again.'),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(ctx);
-                    },
-                    child: const Text('OK'),
-                  ),
-                ],
-              );
-            },
-          );
-        }
-      }
+        },
+      );
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
