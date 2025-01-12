@@ -41,13 +41,12 @@ class _ResetPasswordScreen extends State<ResetPasswordScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset("assets/Google-flutter-logo.png",
-                    width: 200,
+                  Image.asset(
+                    "assets/logo.png",
+                    width: 350,
                   ),
-                  const SizedBox(width: 16),
                 ],
               ),
-              const SizedBox(height: 16),
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(

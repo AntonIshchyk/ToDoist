@@ -45,13 +45,12 @@ class _SignupScreen extends State<SignupScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset("assets/Google-flutter-logo.png",
-                    width: 200,
+                  Image.asset(
+                    "assets/logo.png",
+                    width: 350,
                   ),
-                  const SizedBox(width: 16),
                 ],
               ),
-              const SizedBox(height: 16),
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(

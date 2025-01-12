@@ -43,18 +43,15 @@ class _SignInPageState extends State<SignInScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text("ToDoist", textAlign: TextAlign.center),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.asset(
-                      "assets/icon.png",
-                      width: 200,
+                      "assets/logo.png",
+                      width: 350,
                     ),
-                    const SizedBox(width: 16),
                   ],
                 ),
-                const SizedBox(height: 16),
                 TextFormField(
                   controller: _emailController,
                   decoration: const InputDecoration(
