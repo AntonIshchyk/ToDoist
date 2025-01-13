@@ -21,14 +21,13 @@ class DBService {
     return _db!;
   }
 
-  // Initialize the database and create the 'users' table if not exists
   Future<Database> _initDatabase() async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, 'database.db');
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _onCreate,
     );
   }
@@ -50,8 +49,11 @@ class DBService {
       userId INTEGER NOT NULL,
       title TEXT NOT NULL,
       description TEXT,
-      isCompleted INTEGER NOT NULL
+      isCompleted INTEGER NOT NULL,
+      FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
     )
   ''');
+
+    await db.execute('PRAGMA foreign_keys = ON');
   }
 }

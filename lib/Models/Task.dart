@@ -25,10 +25,10 @@ class Task {
 
   static Task fromMap(Map<String, dynamic> map) {
     return Task(
-      id: map['id'],
-      userId: map['userId'],
-      title: map['title'],
-      description: map['description'],
+      id: map['id'] as int,
+      userId: map['userId'] as int,
+      title: map['title'] as String,
+      description: map['description'] as String,
       isCompleted: map['isCompleted'] == 1,
     );
   }
