@@ -94,7 +94,20 @@ class _HomeScreenState extends State<HomeScreen> {
         itemBuilder: (ctx, index) {
           final task = _tasks[index];
           return ListTile(
-            title: Text(task.title),
+            leading: Checkbox(
+              value: task.isCompleted,
+              onChanged: (bool? value) {
+                setState(() {
+                  task.isCompleted = value ?? false;
+                });
+              },
+            ),
+            title: Text(
+              task.title,
+              style: TextStyle(
+                decoration: task.isCompleted ? TextDecoration.lineThrough : null,
+              ),
+            ),
             subtitle: Text(task.description ?? "No description"),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
