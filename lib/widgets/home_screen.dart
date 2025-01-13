@@ -24,16 +24,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final tasks = await _taskAccess.getTasks(widget.userId);
     setState(() {
       _tasks.addAll(tasks);
-      print("-----------------------------------");
-      print("-----------------------------------");
-      print("-----------------------------------");
-      print("-----------------------------------");
-      print("-----------------------------------");
-      print(tasks);
-      print("-----------------------------------");
-      print("-----------------------------------");
-      print("-----------------------------------");
-
     });
   }
 
@@ -127,6 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onChanged: (bool? value) {
                 setState(() {
                   task.isCompleted = value ?? false;
+                  _editTask(index, task);
                 });
               },
             ),
