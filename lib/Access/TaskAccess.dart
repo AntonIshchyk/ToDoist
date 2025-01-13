@@ -10,13 +10,13 @@ class TaskAccess {
     return db.insert('tasks', task.toMap());
   }
 
-  Future<List<Task>> getTasks({int? userId}) async {
+  Future<List<Task>> getTasks(int userId) async {
     final db = await _dbService.database;
 
     final List<Map<String, dynamic>> maps = await db.query(
       'tasks',
-      where: userId != null ? 'userId = ?' : null,
-      whereArgs: userId != null ? [userId] : null,
+      where: 'userId = ?',
+      whereArgs: [userId]
     );
 
     return maps.map((map) => Task.fromMap(map)).toList();
@@ -32,7 +32,7 @@ class TaskAccess {
     );
   }
 
-  Future<int> deleteTask(int id) async {
+  Future<int> deleteTask(int? id) async {
     final db = await _dbService.database;
     return db.delete(
       'tasks',

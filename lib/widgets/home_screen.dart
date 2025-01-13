@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todoist/Access/TaskAccess.dart';
 import '../Models/Task.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -11,20 +12,47 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final List<Task> _tasks = [];
+  final TaskAccess _taskAccess = TaskAccess();
 
-  void _addTask(Task task) {
+  @override
+  void initState() {
+    super.initState();
+    _loadTasks();
+  }
+
+  Future<void> _loadTasks() async {
+    final tasks = await _taskAccess.getTasks(widget.userId);
+    setState(() {
+      _tasks.addAll(tasks);
+      print("-----------------------------------");
+      print("-----------------------------------");
+      print("-----------------------------------");
+      print("-----------------------------------");
+      print("-----------------------------------");
+      print(tasks);
+      print("-----------------------------------");
+      print("-----------------------------------");
+      print("-----------------------------------");
+
+    });
+  }
+
+  Future<void> _addTask(Task task) async {
+    await _taskAccess.insertTask(task);
     setState(() {
       _tasks.add(task);
     });
   }
 
-  void _editTask(int index, Task updatedTask) {
+  Future<void> _editTask(int index, Task updatedTask) async {
+    await _taskAccess.updateTask(updatedTask);
     setState(() {
       _tasks[index] = updatedTask;
     });
   }
 
-  void _deleteTask(int index) {
+  Future<void> _deleteTask(int index) async {
+    await _taskAccess.deleteTask(_tasks[index].id);
     setState(() {
       _tasks.removeAt(index);
     });
