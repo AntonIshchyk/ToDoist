@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../Access/UserAccess.dart';
 import 'home_screen.dart';
 import 'reset_password_screen.dart';
 import 'sign_up_screen.dart';
@@ -14,12 +15,47 @@ class _SignInPageState extends State<SignInScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final UserAccess _userAccess = UserAccess();
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  void _signIn() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      final String email = _emailController.text;
+      final String password = _passwordController.text;
+
+      final int? userId = await _userAccess.authenticateUser(email, password);
+
+      if (userId != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomeScreen(userId: userId),
+          ),
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (ctx) {
+            return AlertDialog(
+              title: const Text('Error'),
+              content: const Text('Invalid email or password.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    }
   }
 
   @override
@@ -111,14 +147,7 @@ class _SignInPageState extends State<SignInScreen> {
                   children: [
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState?.validate() ?? false) {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (context) => const HomeScreen()),
-                            );
-                          }
-                        },
+                        onPressed: _signIn,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
                           foregroundColor: Colors.white,

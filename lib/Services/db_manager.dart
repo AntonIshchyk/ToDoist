@@ -47,6 +47,7 @@ class DBService {
     await db.execute(''' 
     CREATE TABLE tasks (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
+      userId INTEGER NOT NULL,
       title TEXT NOT NULL,
       description TEXT,
       isCompleted INTEGER NOT NULL

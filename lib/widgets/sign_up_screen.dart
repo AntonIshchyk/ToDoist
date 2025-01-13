@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../Access/UserAccess.dart';
 import '../Models/User.dart';
+import 'home_screen.dart';
 
 
 class SignupScreen extends StatefulWidget {
@@ -34,7 +35,7 @@ class _SignupScreen extends State<SignupScreen> {
       );
 
       UserAccess userAccess = UserAccess();
-      await userAccess.insertUser(newUser);
+      int userId = await userAccess.insertUser(newUser);
 
       showDialog(
         context: context,
@@ -44,7 +45,15 @@ class _SignupScreen extends State<SignupScreen> {
             content: Text('Welcome ${_nameController.text}'),
             actions: [
               TextButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HomeScreen(userId: userId),
+                    ),
+                  );
+                },
                 child: const Text('OK'),
               ),
             ],
@@ -53,7 +62,6 @@ class _SignupScreen extends State<SignupScreen> {
       );
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +151,7 @@ class _SignupScreen extends State<SignupScreen> {
               ),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: _registerUser,  // Call the registration method
+                onPressed: _registerUser,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
                   foregroundColor: Colors.white,

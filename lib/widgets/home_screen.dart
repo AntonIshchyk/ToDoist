@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import '../Models/Task.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final int userId;
+  const HomeScreen({super.key, required this.userId });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -29,13 +30,9 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _showTaskDialog({Task? task, required int? index}) {
-    final TextEditingController titleController = TextEditingController(
-      text: task?.title ?? '',
-    );
-    final TextEditingController descriptionController = TextEditingController(
-      text: task?.description ?? '',
-    );
+  void _showTaskDialog({Task? task, int? index}) {
+    final titleController = TextEditingController(text: task?.title ?? '');
+    final descriptionController = TextEditingController(text: task?.description ?? '');
 
     showDialog(
       context: context,
@@ -63,6 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
             TextButton(
               onPressed: () {
                 final newTask = Task(
+                  userId: widget.userId,
                   title: titleController.text,
                   description: descriptionController.text.isNotEmpty
                       ? descriptionController.text
@@ -89,7 +87,9 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text("My Tasks"),
       ),
-      body: ListView.builder(
+      body: _tasks.isEmpty
+          ? const Center(child: Text("No tasks available."))
+          : ListView.builder(
         itemCount: _tasks.length,
         itemBuilder: (ctx, index) {
           final task = _tasks[index];
@@ -113,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showTaskDialog(index: null),
+        onPressed: () => _showTaskDialog(),
         child: const Icon(Icons.add),
       ),
     );

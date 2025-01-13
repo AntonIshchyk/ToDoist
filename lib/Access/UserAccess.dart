@@ -19,6 +19,33 @@ class UserAccess {
     });
   }
 
+  Future<User?> getUserByEmail(String email) async {
+    final db = await DBService().database;
+
+    final List<Map<String, dynamic>> result =
+    await db.query('users', where: 'email = ?', whereArgs: [email]);
+
+    if (result.isNotEmpty) {
+      return User.fromMap(result.first);
+    }
+    return null;
+  }
+
+  Future<int?> authenticateUser(String email, String password) async {
+    final db = await DBService().database;
+
+    final List<Map<String, dynamic>> result = await db.query(
+      'users',
+      where: 'email = ? AND password = ?',
+      whereArgs: [email, password],
+    );
+
+    if (result.isNotEmpty) {
+      return result.first['id'] as int;
+    }
+    return null;
+  }
+
   Future<int> updateUser(User user) async {
     final db = await DBService().database;
 
