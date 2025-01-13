@@ -43,5 +43,14 @@ class DBService {
         password TEXT NOT NULL
       )
     ''');
+
+    await db.execute(''' 
+    CREATE TABLE tasks (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      description TEXT,
+      isCompleted INTEGER NOT NULL
+    )
+  ''');
   }
 }

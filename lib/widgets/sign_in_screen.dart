@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'home_screen.dart';
 import 'reset_password_screen.dart';
 import 'sign_up_screen.dart';
 
@@ -112,18 +113,9 @@ class _SignInPageState extends State<SignInScreen> {
                       child: ElevatedButton(
                         onPressed: () {
                           if (_formKey.currentState?.validate() ?? false) {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext ctx) {
-                                return AlertDialog(
-                                  title: const Text('Successful validation'),
-                                  content: Text(
-                                    "Data that will be used for back-end\n"
-                                        "Email: ${_emailController.text}"
-                                        "\nPassword: ${_passwordController.text}",
-                                  ),
-                                );
-                              },
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => const HomeScreen()),
                             );
                           }
                         },

@@ -27,14 +27,12 @@ class _SignupScreen extends State<SignupScreen> {
   // Method to handle user registration
   void _registerUser() async {
     if (_formKey.currentState?.validate() ?? false) {
-      // Create a User object with form data
       User newUser = User(
         name: _nameController.text,
         email: _emailController.text,
         password: _passwordController.text,
       );
 
-      // Call the UserAccess class to insert the new user
       UserAccess userAccess = UserAccess();
       await userAccess.insertUser(newUser);
 
