@@ -32,7 +32,7 @@ class _SignInPageState extends State<SignInScreen> {
       final int? userId = await _userAccess.authenticateUser(email, password);
 
       if (userId != null) {
-        Navigator.pushReplacement(
+        Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => HomeScreen(userId: userId),
