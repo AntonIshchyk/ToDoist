@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
+import '../Access/UserAccess.dart';
+import '../Models/User.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key});
@@ -10,11 +13,56 @@ class ResetPasswordScreen extends StatefulWidget {
 class _ResetPasswordScreen extends State<ResetPasswordScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _newPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
 
   @override
   void dispose() {
     _emailController.dispose();
+    _newPasswordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _resetPassword() async {
+    String email = _emailController.text;
+    String newPassword = _newPasswordController.text;
+    String confirmPassword = _confirmPasswordController.text;
+
+    if (newPassword != confirmPassword) {
+      _showDialog('Password mismatch', 'The passwords do not match.');
+      return;
+    }
+
+    UserAccess userAccess = UserAccess();
+    User? user = await userAccess.getUserByEmail(email);
+
+
+    if (user == null) {
+      _showDialog('Email not found', 'No account found with that email.');
+      return;
+    }
+    user.password = newPassword;
+    await userAccess.updateUser(user);
+    _showDialog('Password reset successful', 'Your password has been reset successfully.');
+  }
+
+  void _showDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -67,28 +115,51 @@ class _ResetPasswordScreen extends State<ResetPasswordScreen> {
                 },
               ),
               const SizedBox(height: 16),
+              TextFormField(
+                controller: _newPasswordController,
+                decoration: const InputDecoration(
+                  labelText: "New Password",
+                  hintText: "Enter your new password",
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.lock),
+                ),
+                obscureText: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a new password';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _confirmPasswordController,
+                decoration: const InputDecoration(
+                  labelText: "Confirm Password",
+                  hintText: "Confirm your new password",
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.lock),
+                ),
+                obscureText: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please confirm your password';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState?.validate() ?? false) {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext ctx) {
-                        return AlertDialog(
-                          title: const Text('Successful validation'),
-                          content: Text(
-                            "The following email will be used for password reset\n"
-                                "Email: ${_emailController.text}"
-                          ),
-                        );
-                      },
-                    );
+                    _resetPassword();
                   }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
                   foregroundColor: Colors.white,
                 ),
-                child: const Text("Reset"),
+                child: const Text("Reset Password"),
               ),
               OutlinedButton(
                 onPressed: () => {

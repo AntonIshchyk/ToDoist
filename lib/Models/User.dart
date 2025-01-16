@@ -1,8 +1,8 @@
 class User {
   int? id;
-  final String name;
-  final String email;
-  final String password;
+  String name;
+  String email;
+  String password;
 
   User({
     this.id,
