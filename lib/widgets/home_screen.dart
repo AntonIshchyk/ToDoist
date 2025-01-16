@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todoist/Access/TaskAccess.dart';
+import 'package:todoist/Access/UserAccess.dart';
+import 'package:todoist/widgets/sign_in_screen.dart';
 import '../Models/Task.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -13,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final List<Task> _tasks = [];
   final TaskAccess _taskAccess = TaskAccess();
+  final UserAccess _userAccess = UserAccess();
 
   @override
   void initState() {
@@ -46,6 +49,52 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _tasks.removeAt(index);
     });
+  }
+
+  Future<void> _deleteAccount() async {
+    await _deleteAllTasks();
+    final result = await _userAccess.deleteUser(widget.userId);
+
+    if (result > 0) {
+      _showDialog('Account deleted', 'Your account has been deleted successfully.');
+
+      // Remove all previous routes and push the Login screen
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const SignInScreen()),
+            (route) => false,  // Remove all previous routes, so there's no back navigation
+      );
+    } else {
+      _showDialog('Deletion failed', 'There was an error deleting your account. Please try again.');
+    }
+  }
+
+
+  Future<void> _deleteAllTasks() async {
+    for (var task in _tasks) {
+      await _taskAccess.deleteTask(task.id);
+    }
+    setState(() {
+      _tasks.clear();
+    });
+  }
+
+  void _showDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _showTaskDialog({Task? task, int? index}) {
@@ -104,6 +153,40 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("My Tasks"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.delete_forever),
+            onPressed: () async {
+              bool? confirmDelete = await showDialog<bool>(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text("Delete Account"),
+                    content: const Text("Are you sure you want to delete your account? This action cannot be undone."),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context, false);
+                        },
+                        child: const Text("Cancel"),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context, true);
+                        },
+                        child: const Text("Delete"),
+                      ),
+                    ],
+                  );
+                },
+              );
+
+              if (confirmDelete == true) {
+                _deleteAccount();
+              }
+            },
+          ),
+        ],
       ),
       body: _tasks.isEmpty
           ? const Center(child: Text("No tasks available."))
